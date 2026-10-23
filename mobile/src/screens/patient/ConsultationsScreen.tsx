@@ -135,6 +135,7 @@ export const ConsultationsScreen: React.FC = () => {
   const [isHospitalModalOpen, setIsHospitalModalOpen] = useState(false);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(['High Fever']);
   const [customSymptom, setCustomSymptom] = useState('');
+  const [customSymptomsList, setCustomSymptomsList] = useState<string[]>([]);
   const [extraNotes, setExtraNotes] = useState('');
 
   // AI Triage & Hospital Appointment state
@@ -382,9 +383,13 @@ export const ConsultationsScreen: React.FC = () => {
   };
 
   const handleAddCustomSymptom = () => {
-    if (!customSymptom.trim()) return;
-    if (!selectedSymptoms.includes(customSymptom.trim())) {
-      setSelectedSymptoms([...selectedSymptoms, customSymptom.trim()]);
+    const trimmed = customSymptom.trim();
+    if (!trimmed) return;
+    if (!customSymptomsList.includes(trimmed)) {
+      setCustomSymptomsList((prev) => [...prev, trimmed]);
+    }
+    if (!selectedSymptoms.includes(trimmed)) {
+      setSelectedSymptoms((prev) => [...prev, trimmed]);
     }
     setCustomSymptom('');
   };
@@ -1093,38 +1098,40 @@ export const ConsultationsScreen: React.FC = () => {
                   <Text style={[styles.formLabel, { color: colors.textMuted }]}>
                     {t('selectSymptoms')}:
                   </Text>
-                  <View style={styles.symptomGrid}>
-                    {SYMPTOM_CATALOG.map((sym) => {
-                      const isSelected = selectedSymptoms.includes(sym);
-                      return (
-                        <TouchableOpacity
-                          key={sym}
-                          style={[
-                            styles.symptomChip,
-                            {
-                              backgroundColor: isSelected ? colors.primaryLight : colors.bgSubtle,
-                              borderColor: isSelected ? colors.primary : colors.borderLight,
-                            },
-                          ]}
-                          onPress={() => toggleSymptom(sym)}
-                        >
-                          <Ionicons
-                            name={isSelected ? 'checkmark-circle' : 'add-circle-outline'}
-                            size={15}
-                            color={isSelected ? colors.primary : colors.textSubtle}
-                          />
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              fontWeight: isSelected ? '700' : '500',
-                              color: isSelected ? colors.primary : colors.textMain,
-                            }}
+                  <View style={{ maxHeight: 180, marginBottom: 8 }}>
+                    <ScrollView nestedScrollEnabled showsVerticalScrollIndicator contentContainerStyle={styles.symptomGrid}>
+                      {Array.from(new Set([...SYMPTOM_CATALOG, ...customSymptomsList, ...selectedSymptoms])).map((sym) => {
+                        const isSelected = selectedSymptoms.includes(sym);
+                        return (
+                          <TouchableOpacity
+                            key={sym}
+                            style={[
+                              styles.symptomChip,
+                              {
+                                backgroundColor: isSelected ? colors.primaryLight : colors.bgSubtle,
+                                borderColor: isSelected ? colors.primary : colors.borderLight,
+                              },
+                            ]}
+                            onPress={() => toggleSymptom(sym)}
                           >
-                            {sym}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })}
+                            <Ionicons
+                              name={isSelected ? 'checkmark-circle' : 'add-circle-outline'}
+                              size={15}
+                              color={isSelected ? colors.primary : colors.textSubtle}
+                            />
+                            <Text
+                              style={{
+                                fontSize: 12,
+                                fontWeight: isSelected ? '700' : '500',
+                                color: isSelected ? colors.primary : colors.textMain,
+                              }}
+                            >
+                              {sym}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </ScrollView>
                   </View>
 
                   {/* Add Custom Symptom */}

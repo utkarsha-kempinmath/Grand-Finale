@@ -36,7 +36,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
   const { colors } = useTheme();
   const { t } = useLanguage();
 
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [googleIdToken, setGoogleIdToken] = useState<string | null>(route?.params?.googleIdToken || null);
 
   // Step 1: Account fields
@@ -44,6 +44,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
   const [fullName, setFullName] = useState(route?.params?.googleFullName || '');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState<UserRole>('PATIENT');
 
   useEffect(() => {
@@ -198,6 +199,10 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
         Alert.alert('Password Length', 'Password must be at least 6 characters.');
         return;
       }
+      if (password !== confirmPassword) {
+        Alert.alert('Password Mismatch', 'Password and confirm password do not match.');
+        return;
+      }
     }
     setStep(2);
   };
@@ -322,11 +327,15 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
           <View style={styles.headerRow}>
             <Text style={[styles.title, { color: colors.textMain }]}>{t('createAccount')}</Text>
             <View style={[styles.stepBadge, { backgroundColor: colors.primaryLight }]}>
-              <Text style={[styles.stepText, { color: colors.primary }]}>Step {step} of 2</Text>
+              <Text style={[styles.stepText, { color: colors.primary }]}>Step {step} of 3</Text>
             </View>
           </View>
           <Text style={[styles.subtitle, { color: colors.textSubtle }]}>
-            {step === 1 ? 'Account credentials and system role' : `Complete your ${role} profile`}
+            {step === 1
+              ? 'Step 1: Account credentials & login method'
+              : step === 2
+              ? 'Step 2: Choose your account type'
+              : `Step 3: Complete your ${role} profile`}
           </Text>
 
           {error ? (
@@ -335,7 +344,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
             </View>
           ) : null}
 
-          {step === 1 ? (
+          {step === 1 && (
             <>
               {googleIdToken ? (
                 <View style={[styles.googleLinkedBanner, { backgroundColor: colors.primaryLight, borderColor: colors.primary }]}>
@@ -386,7 +395,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
               <Text style={[styles.label, { color: colors.textMuted }]}>{t('username')}</Text>
               <TextInput
                 style={[styles.input, { backgroundColor: colors.bgSubtle, borderColor: colors.borderLight, color: colors.textMain }]}
-                placeholder="Unique username"
+                placeholder="Unique username or email"
                 placeholderTextColor={colors.textSubtle}
                 autoCapitalize="none"
                 value={username}
@@ -405,7 +414,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
                 onChangeText={setPhoneNumber}
               />
 
-              {/* Password */}
+              {/* Password & Confirm Password */}
               {!googleIdToken && (
                 <>
                   <Text style={[styles.label, { color: colors.textMuted }]}>{t('password')}</Text>
@@ -417,38 +426,125 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
                     value={password}
                     onChangeText={setPassword}
                   />
+
+                  <Text style={[styles.label, { color: colors.textMuted }]}>Confirm Password</Text>
+                  <TextInput
+                    style={[styles.input, { backgroundColor: colors.bgSubtle, borderColor: colors.borderLight, color: colors.textMain }]}
+                    placeholder="Re-enter your password"
+                    placeholderTextColor={colors.textSubtle}
+                    secureTextEntry
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                  />
                 </>
               )}
 
-              {/* Role Selection */}
-              <Text style={[styles.label, { color: colors.textMuted, marginTop: 12 }]}>{t('selectRole')}</Text>
-              <View style={styles.roleGrid}>
-                {(['PATIENT', 'DOCTOR', 'FACILITY_ADMIN', 'CAREGIVER', 'ASHA'] as UserRole[]).map((r) => (
-                  <TouchableOpacity
-                    key={r}
-                    style={[
-                      styles.roleButton,
-                      {
-                        backgroundColor: role === r ? colors.primaryLight : colors.bgSubtle,
-                        borderColor: role === r ? colors.primary : colors.borderLight,
-                      },
-                    ]}
-                    onPress={() => setRole(r)}
-                  >
-                    <Text style={[styles.roleText, { color: role === r ? colors.primary : colors.textMain }]}>
-                      {r === 'PATIENT' ? 'Patient' : r === 'DOCTOR' ? 'Doctor' : r === 'FACILITY_ADMIN' ? 'Hospital Admin' : r === 'CAREGIVER' ? 'Caregiver' : 'ASHA Worker'}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
               <Button
-                title="Next: Profile Setup"
+                title="Next: Select Account Type →"
                 onPress={handleNextStep}
                 style={styles.submitBtn}
               />
             </>
-          ) : (
+          )}
+
+          {step === 2 && (
+            <>
+              <Text style={[styles.label, { color: colors.textMuted, fontSize: 14, marginBottom: 12 }]}>
+                Select the role that matches your account:
+              </Text>
+              <View style={styles.roleGrid}>
+                {(['PATIENT', 'DOCTOR', 'FACILITY_ADMIN', 'CAREGIVER', 'ASHA'] as UserRole[]).map((r) => {
+                  const isSelected = role === r;
+                  const roleLabel =
+                    r === 'PATIENT'
+                      ? 'Patient'
+                      : r === 'DOCTOR'
+                      ? 'Doctor'
+                      : r === 'FACILITY_ADMIN'
+                      ? 'Hospital Admin'
+                      : r === 'CAREGIVER'
+                      ? 'Caregiver'
+                      : 'ASHA Worker';
+                  const roleSub =
+                    r === 'PATIENT'
+                      ? 'Book appointments, symptom triage, SOS'
+                      : r === 'DOCTOR'
+                      ? 'Tele-consultations, triage queue & prescription'
+                      : r === 'FACILITY_ADMIN'
+                      ? 'Hospital facility management & beds'
+                      : r === 'CAREGIVER'
+                      ? 'Assist family members & patients'
+                      : 'Rural healthcare community outreach';
+
+                  return (
+                    <TouchableOpacity
+                      key={r}
+                      style={[
+                        styles.roleButton,
+                        {
+                          width: '100%',
+                          backgroundColor: isSelected ? colors.primaryLight : colors.bgSubtle,
+                          borderColor: isSelected ? colors.primary : colors.borderLight,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          padding: 14,
+                        },
+                      ]}
+                      onPress={() => setRole(r)}
+                    >
+                      <Ionicons
+                        name={
+                          r === 'PATIENT'
+                            ? 'person-outline'
+                            : r === 'DOCTOR'
+                            ? 'medical-outline'
+                            : r === 'FACILITY_ADMIN'
+                            ? 'business-outline'
+                            : r === 'CAREGIVER'
+                            ? 'heart-outline'
+                            : 'medkit-outline'
+                        }
+                        size={24}
+                        color={isSelected ? colors.primary : colors.textSubtle}
+                        style={{ marginRight: 12 }}
+                      />
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.roleText, { fontSize: 15, color: isSelected ? colors.primary : colors.textMain }]}>
+                          {roleLabel}
+                        </Text>
+                        <Text style={{ fontSize: 12, color: colors.textMuted, marginTop: 2 }}>
+                          {roleSub}
+                        </Text>
+                      </View>
+                      <Ionicons
+                        name={isSelected ? 'radio-button-on' : 'radio-button-off'}
+                        size={20}
+                        color={isSelected ? colors.primary : colors.textSubtle}
+                      />
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              <View style={styles.buttonRow}>
+                <TouchableOpacity
+                  style={[styles.backBtn, { borderColor: colors.borderLight }]}
+                  onPress={() => setStep(1)}
+                >
+                  <Ionicons name="arrow-back" size={18} color={colors.textMain} />
+                  <Text style={[styles.backBtnText, { color: colors.textMain }]}>Back</Text>
+                </TouchableOpacity>
+
+                <Button
+                  title="Next: Profile Details →"
+                  onPress={() => setStep(3)}
+                  style={styles.completeBtn}
+                />
+              </View>
+            </>
+          )}
+
+          {step === 3 && (
             <>
               {/* Step 2 Profile based on Role */}
               {role === 'PATIENT' && (
@@ -910,7 +1006,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation, rout
               <View style={styles.buttonRow}>
                 <TouchableOpacity
                   style={[styles.backBtn, { borderColor: colors.borderLight }]}
-                  onPress={() => setStep(1)}
+                  onPress={() => setStep(2)}
                 >
                   <Ionicons name="arrow-back" size={18} color={colors.textMain} />
                   <Text style={[styles.backBtnText, { color: colors.textMain }]}>Back</Text>

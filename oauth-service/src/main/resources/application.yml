@@ -15,7 +15,7 @@ google:
   web-client-id: ${GOOGLE_WEB_CLIENT_ID:}
 
 core:
-  base-url: ${CORE_BASE_URL:http://localhost:8081}
+  base-url: ${CORE_BASE_URL:https://core-io9d.onrender.com}
 
 internal:
   service-key: ${INTERNAL_SERVICE_KEY:internal-service-secret-key-rural-healthcare}

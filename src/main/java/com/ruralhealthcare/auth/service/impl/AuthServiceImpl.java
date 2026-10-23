@@ -183,7 +183,7 @@ public class AuthServiceImpl implements AuthService {
         } else if (role == UserRole.DOCTOR) {
             if (!StringUtils.hasText(associatedEntityId)) {
                 try {
-                    String doctorServiceUrl = System.getenv().getOrDefault("DOCTOR_SERVICE_URL", "http://localhost:8086");
+                    String doctorServiceUrl = System.getenv().getOrDefault("DOCTOR_SERVICE_URL", "https://aarogya-doctor-service.onrender.com");
                     RestClient restClient = RestClient.create();
                     Map<String, Object> docReq = new LinkedHashMap<>();
                     docReq.put("userId", newUserId.toString());
@@ -431,7 +431,7 @@ public class AuthServiceImpl implements AuthService {
                 return;
             }
             try {
-                String doctorServiceUrl = System.getenv().getOrDefault("DOCTOR_SERVICE_URL", "http://localhost:8086");
+                String doctorServiceUrl = System.getenv().getOrDefault("DOCTOR_SERVICE_URL", "https://aarogya-doctor-service.onrender.com");
                 RestClient restClient = RestClient.create();
                 Map resp = restClient.get()
                         .uri(doctorServiceUrl + "/api/doctors/user/" + user.getId().toString())
