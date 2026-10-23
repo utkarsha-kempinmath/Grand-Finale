@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
         name = "communication-service",
-        url = "${communication-service.url:http://localhost:8084}",
+        url = "${communication-service.url:https://aarogya-communication-service.onrender.com}",
         configuration = FeignConfig.class
 )
 public interface CommunicationServiceClient {

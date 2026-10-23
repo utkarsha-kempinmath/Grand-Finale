@@ -30,10 +30,10 @@ spring:
         default_schema: consultation
 
 doctor-service:
-  url: ${DOCTOR_SERVICE_URL:http://localhost:8086}
+  url: ${DOCTOR_SERVICE_URL:https://aarogya-doctor-service.onrender.com}
 
 communication-service:
-  url: ${COMMUNICATION_SERVICE_URL:http://localhost:8084}
+  url: ${COMMUNICATION_SERVICE_URL:https://aarogya-communication-service.onrender.com}
 
 jitsi:
   base-url: ${JITSI_BASE_URL:https://meet.jit.si}

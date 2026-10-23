@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "doctor-service", url = "${doctor-service.url:http://localhost:8086}", configuration = FeignConfig.class)
+@FeignClient(name = "doctor-service", url = "${doctor-service.url:https://aarogya-doctor-service.onrender.com}", configuration = FeignConfig.class)
 public interface DoctorServiceClient {
 
     @GetMapping("/api/doctors/available")
