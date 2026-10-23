@@ -28,7 +28,23 @@
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "738825290071-2hudp01ira5hhb5iv0h5brttlagrcc7f.apps.googleusercontent.com"
       }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_DEMO_MODE": "false",
+        "EXPO_PUBLIC_MOCK_LOCATION": "false",
+        "EXPO_PUBLIC_API_HOST": "https://core-io9d.onrender.com",
+        "EXPO_PUBLIC_CORE_URL": "https://core-io9d.onrender.com",
+        "EXPO_PUBLIC_SOS_URL": "https://aarogya-sos-service.onrender.com",
+        "EXPO_PUBLIC_CONSULTATION_URL": "https://aarogya-consultation-service.onrender.com",
+        "EXPO_PUBLIC_COMMUNICATION_URL": "https://aarogya-communication-service.onrender.com",
+        "EXPO_PUBLIC_CHATBOT_URL": "https://aarogya-chatbot-service.onrender.com",
+        "EXPO_PUBLIC_DOCTOR_URL": "https://aarogya-doctor-service.onrender.com",
+        "EXPO_PUBLIC_MEDICINE_URL": "https://aarogya-medicine-service.onrender.com",
+        "EXPO_PUBLIC_CALLING_URL": "https://aarogya-calling-service.onrender.com",
+        "EXPO_PUBLIC_OAUTH_URL": "https://aarogya-oauth-service.onrender.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "738825290071-2hudp01ira5hhb5iv0h5brttlagrcc7f.apps.googleusercontent.com"
+      }
+    }
   },
   "submit": {
     "production": {}
