@@ -23,7 +23,7 @@ public class OAuthService {
 
     public OAuthService(GoogleTokenVerifierService verifierService,
                         RestClient.Builder restClientBuilder,
-                        @Value("${core.base-url:http://localhost:8081}") String coreBaseUrl,
+                        @Value("${core.base-url:https://core-io9d.onrender.com}") String coreBaseUrl,
                         @Value("${internal.service-key:internal-service-secret-key-rural-healthcare}") String internalServiceKey) {
         this.verifierService = verifierService;
         this.coreBaseUrl = coreBaseUrl;
